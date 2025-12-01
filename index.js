@@ -2,7 +2,6 @@ import express from 'express';
 import cors from "cors";
 import Hello from "./Hello.js";
 import Lab5 from "./Lab5/index.js";
-import db from "./Kambaz/Database/index.js";
 import UserRoutes from "./Kambaz/Users/routes.js";
 import CourseRoutes from "./Kambaz/Courses/routes.js";
 import "dotenv/config";
@@ -13,7 +12,19 @@ import EnrollmentsRoutes from "./Kambaz/Enrollments/routes.js";
 import mongoose from "mongoose";
 
 const CONNECTION_STRING = process.env.DATABASE_CONNECTION_STRING || "mongodb://127.0.0.1:27017/kambaz"
-mongoose.connect(CONNECTION_STRING)
+const startServer = async () => {
+    try {
+        await mongoose.connect(CONNECTION_STRING);
+        app.listen(process.env.PORT || 4000, () => {
+            console.log("Server started");
+        });
+    } catch (err) {
+        console.error("MongoDB connection error:", err);
+        process.exit(1);
+    }
+};
+
+startServer();
 
 const app = express()
 app.use(cors({
@@ -37,11 +48,11 @@ if (process.env.SERVER_ENV !== "development") {
 }
 app.use(session(sessionOptions))
 app.use(express.json())
-UserRoutes(app, db)
-CourseRoutes(app, db)
-ModulesRoutes(app, db)
-AssignmentsRoutes(app, db)
-EnrollmentsRoutes(app, db)
+UserRoutes(app)
+CourseRoutes(app)
+ModulesRoutes(app)
+AssignmentsRoutes(app)
+EnrollmentsRoutes(app)
 Hello(app)
 Lab5(app)
 app.listen(process.env.PORT || 4000)

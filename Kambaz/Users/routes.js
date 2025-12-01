@@ -72,7 +72,6 @@ export default function UserRoutes(app) {
         }
         res.json(currentUser);
     };
-
     app.post("/api/users", createUser);
     app.get("/api/users", findAllUsers);
     app.get("/api/users/:userId", findUserById);

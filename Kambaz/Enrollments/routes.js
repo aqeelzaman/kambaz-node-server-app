@@ -3,7 +3,7 @@ import EnrollmentsDao from "./dao.js";
 export default function EnrollmentsRoutes(app, db) {
     const dao = EnrollmentsDao(db);
 
-    const findEnrollmentsForUser = (req, res) => {
+    const findEnrollmentsForUser = async (req, res) => {
         let {userId} = req.params;
 
         if (userId === "current") {
@@ -13,8 +13,7 @@ export default function EnrollmentsRoutes(app, db) {
             }
             userId = currentUser._id;
         }
-
-        const enrollments = dao.findEnrollmentsForUser(userId);
+        const enrollments = await dao.findEnrollmentsForUser(userId);
         res.json(enrollments);
     };
 
@@ -48,7 +47,6 @@ export default function EnrollmentsRoutes(app, db) {
         const result = dao.unenrollUserFromCourse(userId, courseId);
         res.json(result);
     };
-
     app.get("/api/users/:userId/enrollments", findEnrollmentsForUser);
     app.post("/api/users/:userId/enrollments", enrollUserInCourse);
     app.delete("/api/users/:userId/enrollments/:courseId", unenrollUserFromCourse);
